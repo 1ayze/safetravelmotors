@@ -13,7 +13,6 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "@prisma/client": "^5.7.1",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
@@ -27,6 +26,7 @@
     "nodemailer": "^6.9.7"
   },
   "devDependencies": {
+    "@prisma/client": "^6.16.2",
     "@types/bcryptjs": "^2.4.6",
     "@types/compression": "^1.7.5",
     "@types/cors": "^2.8.17",

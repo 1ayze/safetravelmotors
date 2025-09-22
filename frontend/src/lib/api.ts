@@ -125,37 +125,7 @@ export const carsAPI = {
     api.get(`/cars/${id}/inquiries`),
 }
 
-// Blog API
-export const blogAPI = {
-  getAll: (params?: { page?: number; limit?: number; published?: boolean }) =>
-    api.get('/blog', { params }),
-  
-  getBySlug: (slug: string) =>
-    api.get(`/blog/${slug}`),
-  
-  create: (data: FormData) =>
-    api.post('/blog', data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }),
-  
-  update: (id: string, data: FormData) =>
-    api.put(`/blog/${id}`, data, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }),
-  
-  delete: (id: string) =>
-    api.delete(`/blog/${id}`),
-  
-  publish: (id: string) =>
-    api.patch(`/blog/${id}/publish`),
-  
-  unpublish: (id: string) =>
-    api.patch(`/blog/${id}/unpublish`),
-}
+
 
 // Testimonials API
 export const testimonialsAPI = {

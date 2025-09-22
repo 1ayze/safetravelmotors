@@ -5,17 +5,14 @@ import Layout from './components/Layout'
 import HomePage from './pages/HomePage'
 import CarsPage from './pages/CarsPage'
 import CarDetailPage from './pages/CarDetailPage'
-import BlogPage from './pages/BlogPage'
-import BlogPostPage from './pages/BlogPostPage'
+
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
-import TestimonialsPage from './pages/TestimonialsPage'
 import LoginPage from './pages/admin/LoginPage'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import CarsAdminPage from './pages/admin/CarsAdminPage'
 import CarForm from './components/admin/CarForm'
-import BlogAdminPage from './pages/admin/BlogAdminPage'
-import TestimonialsAdminPage from './pages/admin/TestimonialsAdminPage'
+
 import ContactAdminPage from './pages/admin/ContactAdminPage'
 import NotFoundPage from './pages/NotFoundPage'
 
@@ -28,11 +25,9 @@ function App() {
           <Route index element={<HomePage />} />
           <Route path="cars" element={<CarsPage />} />
           <Route path="cars/:id" element={<CarDetailPage />} />
-          <Route path="blog" element={<BlogPage />} />
-          <Route path="blog/:slug" element={<BlogPostPage />} />
+
           <Route path="about" element={<AboutPage />} />
           <Route path="contact" element={<ContactPage />} />
-          <Route path="testimonials" element={<TestimonialsPage />} />
         </Route>
 
         {/* Admin Routes */}
@@ -69,22 +64,8 @@ function App() {
             </RequireAuth>
           } 
         />
-        <Route 
-          path="/admin/blog" 
-          element={
-            <RequireAuth>
-              <BlogAdminPage />
-            </RequireAuth>
-          } 
-        />
-        <Route 
-          path="/admin/testimonials" 
-          element={
-            <RequireAuth>
-              <TestimonialsAdminPage />
-            </RequireAuth>
-          } 
-        />
+
+        
         <Route 
           path="/admin/contact" 
           element={

@@ -9,8 +9,6 @@ const Footer: React.FC = () => {
     { name: 'Home', href: '/' },
     { name: 'Cars', href: '/cars' },
     { name: 'About Us', href: '/about' },
-    { name: 'Blog', href: '/blog' },
-    { name: 'Testimonials', href: '/testimonials' },
     { name: 'Contact', href: '/contact' },
   ]
 
