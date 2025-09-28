@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { 
@@ -26,7 +26,7 @@ const CarsAdminPage: React.FC = () => {
   })
 
   // Fetch cars
-  const { data: carsData, isLoading, error } = useQuery(
+  const { data: carsData, isLoading, error, refetch } = useQuery(
     ['admin-cars', searchQuery, filters],
     () => {
       if (searchQuery) {
@@ -40,6 +40,11 @@ const CarsAdminPage: React.FC = () => {
       })
     }
   )
+
+  // Force refetch on mount to ensure fresh data after adding a car
+  useEffect(() => {
+    refetch()
+  }, [refetch])
 
   // Delete car mutation
   const deleteCarMutation = useMutation(carsAPI.delete, {
