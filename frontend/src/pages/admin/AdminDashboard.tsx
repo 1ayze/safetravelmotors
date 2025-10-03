@@ -1,39 +1,39 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { useQuery } from 'react-query'
-import { 
-  Car, 
-  Eye,
-  Plus
-} from 'lucide-react'
-import { carsAPI } from '../../lib/api'
-import { useAuth } from '../../contexts/AuthContext'
+import React from "react";
+import { Link } from "react-router-dom";
+import { useQuery } from "react-query";
+import { Car, Eye, Plus } from "lucide-react";
+import { carsAPI, resolveImageUrl, FALLBACK_CAR_THUMB } from "../../lib/api";
+import { useAuth } from "../../contexts/AuthContext";
 
 const AdminDashboard: React.FC = () => {
-  const { user } = useAuth()
+  const { user } = useAuth();
 
   // Fetch dashboard data
-  const { data: carsData } = useQuery('admin-cars', () => carsAPI.getAll({ limit: 5 }))
+  const {
+    data: carsData,
+    isLoading: carsLoading,
+    error: carsError,
+  } = useQuery("admin-cars", () => carsAPI.getAll({ limit: 5 }));
 
   const stats = [
     {
-      title: 'Total Cars',
+      title: "Total Cars",
       value: carsData?.data?.pagination?.totalItems ?? 0,
       icon: Car,
-      color: 'bg-blue-500',
-      link: '/admin/cars'
-    }
-  ]
+      color: "bg-blue-500",
+      link: "/admin/cars",
+    },
+  ];
 
   const quickActions = [
     {
-      title: 'Add New Car',
-      description: 'Add a new vehicle to your inventory',
+      title: "Add New Car",
+      description: "Add a new vehicle to your inventory",
       icon: Plus,
-      link: '/admin/cars?action=add',
-      color: 'bg-primary-600'
-    }
-  ]
+      link: "/admin/cars?action=add",
+      color: "bg-primary-600",
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -46,11 +46,7 @@ const AdminDashboard: React.FC = () => {
               <p className="text-gray-600">Welcome back, {user?.username}!</p>
             </div>
             <div className="flex items-center space-x-4">
-              <Link
-                to="/"
-                target="_blank"
-                className="btn btn-outline"
-              >
+              <Link to="/" target="_blank" className="btn btn-outline">
                 <Eye className="w-4 h-4 mr-2" />
                 View Website
               </Link>
@@ -63,7 +59,7 @@ const AdminDashboard: React.FC = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {stats.map((stat) => {
-            const Icon = stat.icon
+            const Icon = stat.icon;
             return (
               <Link
                 key={stat.title}
@@ -76,13 +72,17 @@ const AdminDashboard: React.FC = () => {
                       <Icon className="w-6 h-6 text-white" />
                     </div>
                     <div className="ml-4">
-                      <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                      <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                      <p className="text-sm font-medium text-gray-600">
+                        {stat.title}
+                      </p>
+                      <p className="text-2xl font-bold text-gray-900">
+                        {stat.value}
+                      </p>
                     </div>
                   </div>
                 </div>
               </Link>
-            )
+            );
           })}
         </div>
 
@@ -90,12 +90,14 @@ const AdminDashboard: React.FC = () => {
           {/* Quick Actions */}
           <div className="card">
             <div className="card-header">
-              <h3 className="text-lg font-semibold text-gray-900">Quick Actions</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Quick Actions
+              </h3>
             </div>
             <div className="card-body">
               <div className="grid grid-cols-1 gap-4">
                 {quickActions.map((action) => {
-                  const Icon = action.icon
+                  const Icon = action.icon;
                   return (
                     <Link
                       key={action.title}
@@ -106,11 +108,15 @@ const AdminDashboard: React.FC = () => {
                         <div className={`p-2 rounded-lg ${action.color}`}>
                           <Icon className="w-5 h-5 text-white" />
                         </div>
-                        <h4 className="ml-3 font-medium text-gray-900">{action.title}</h4>
+                        <h4 className="ml-3 font-medium text-gray-900">
+                          {action.title}
+                        </h4>
                       </div>
-                      <p className="text-sm text-gray-600">{action.description}</p>
+                      <p className="text-sm text-gray-600">
+                        {action.description}
+                      </p>
                     </Link>
-                  )
+                  );
                 })}
               </div>
             </div>
@@ -119,28 +125,36 @@ const AdminDashboard: React.FC = () => {
           {/* Recent Activity */}
           <div className="card">
             <div className="card-header">
-              <h3 className="text-lg font-semibold text-gray-900">Recent Activity</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                Recent Activity
+              </h3>
             </div>
             <div className="card-body">
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm text-gray-900">New car added to inventory</p>
+                    <p className="text-sm text-gray-900">
+                      New car added to inventory
+                    </p>
                     <p className="text-xs text-gray-500">2 hours ago</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm text-gray-900">Car inventory updated</p>
+                    <p className="text-sm text-gray-900">
+                      Car inventory updated
+                    </p>
                     <p className="text-xs text-gray-500">4 hours ago</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
                   <div className="flex-1">
-                    <p className="text-sm text-gray-900">Featured car updated</p>
+                    <p className="text-sm text-gray-900">
+                      Featured car updated
+                    </p>
                     <p className="text-xs text-gray-500">1 day ago</p>
                   </div>
                 </div>
@@ -150,13 +164,30 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Recent Cars */}
-        {carsData?.data.cars && carsData.data.cars.length > 0 && (
+        {carsLoading ? (
+          <div className="mt-8 card">
+            <div className="card-body">
+              <p className="text-gray-600">Loading recent cars...</p>
+            </div>
+          </div>
+        ) : carsError ? (
+          <div className="mt-8 card">
+            <div className="card-body">
+              <p className="text-red-600">Failed to load cars.</p>
+            </div>
+          </div>
+        ) : carsData?.data.cars && carsData.data.cars.length > 0 ? (
           <div className="mt-8">
             <div className="card">
               <div className="card-header">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-gray-900">Recent Cars</h3>
-                  <Link to="/admin/cars" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+                  <h3 className="text-lg font-semibold text-gray-900">
+                    Recent Cars
+                  </h3>
+                  <Link
+                    to="/admin/cars"
+                    className="text-primary-600 hover:text-primary-700 text-sm font-medium"
+                  >
                     View All
                   </Link>
                 </div>
@@ -181,63 +212,89 @@ const AdminDashboard: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {carsData.data.cars.map((car) => (
-                        <tr key={car.id}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <div className="flex-shrink-0 h-10 w-10">
-                                {car.images && car.images.length > 0 ? (
-                                  <img
-                                    className="h-10 w-10 rounded-lg object-cover"
-                                    src={car.images[0]}
-                                    alt={`${car.brand} ${car.model}`}
-                                  />
-                                ) : (
-                                  <div className="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
-                                    <Car className="w-5 h-5 text-gray-400" />
+                      {carsData.data.cars.map((car) => {
+                        const imageSrc =
+                          car.images && car.images.length > 0
+                            ? resolveImageUrl(car.images[0])
+                            : "";
+                        return (
+                          <tr key={car.id}>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center">
+                                <div className="flex-shrink-0 h-10 w-10">
+                                  {imageSrc ? (
+                                    <img
+                                      className="h-10 w-10 rounded-lg object-cover"
+                                      src={imageSrc}
+                                      onError={(e) => {
+                                        const target =
+                                          e.currentTarget as HTMLImageElement;
+                                        target.src = FALLBACK_CAR_THUMB;
+                                      }}
+                                      alt={`${car.make || car.brand} ${
+                                        car.model
+                                      }`}
+                                    />
+                                  ) : (
+                                    <div className="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
+                                      <Car className="w-5 h-5 text-gray-400" />
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="ml-4">
+                                  <div className="text-sm font-medium text-gray-900">
+                                    {car.make || car.brand} {car.model}
                                   </div>
-                                )}
-                              </div>
-                              <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900">
-                                  {car.brand} {car.model}
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  {car.year} • {car.mileage.toLocaleString()} mi
+                                  <div className="text-sm text-gray-500">
+                                    {car.year} •{" "}
+                                    {Number(car.mileage).toLocaleString()} mi
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            ${car.price.toLocaleString()}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`badge ${car.isFeatured ? 'badge-primary' : 'badge-secondary'}`}>
-                              {car.isFeatured ? 'Featured' : 'Regular'}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <Link
-                              to={`/admin/cars/${car.id}`}
-                              className="text-primary-600 hover:text-primary-900"
-                            >
-                              Edit
-                            </Link>
-                          </td>
-                        </tr>
-                      ))}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              ${Number(car.price).toLocaleString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span
+                                className={`badge ${
+                                  car.isFeatured
+                                    ? "badge-primary"
+                                    : "badge-secondary"
+                                }`}
+                              >
+                                {car.isFeatured ? "Featured" : "Regular"}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <Link
+                                to={`/admin/cars/${car.id}`}
+                                className="text-primary-600 hover:text-primary-900"
+                              >
+                                Edit
+                              </Link>
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>
           </div>
+        ) : (
+          <div className="mt-8 card">
+            <div className="card-body">
+              <p className="text-gray-600">
+                No cars yet. Use "Add New Car" to create one.
+              </p>
+            </div>
+          </div>
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AdminDashboard
-
-
+export default AdminDashboard;

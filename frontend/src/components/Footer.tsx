@@ -1,31 +1,47 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { Car, Phone, Mail, MapPin, Facebook, Instagram, MessageCircle } from 'lucide-react'
+import React from "react";
+import { Link } from "react-router-dom";
+import {
+  Car,
+  Phone,
+  Mail,
+  MapPin,
+  Facebook,
+  Instagram,
+  MessageCircle,
+} from "lucide-react";
 
 const Footer: React.FC = () => {
-  const currentYear = new Date().getFullYear()
+  const currentYear = new Date().getFullYear();
 
   const quickLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'Cars', href: '/cars' },
-    { name: 'About Us', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-  ]
+    { name: "Home", href: "/" },
+    { name: "Cars", href: "/cars" },
+    { name: "About Us", href: "/about" },
+    { name: "Contact", href: "/contact" },
+  ];
 
   const services = [
-    { name: 'Car Sales', href: '/cars' },
-    { name: 'Car Financing', href: '/contact' },
-    { name: 'Trade-in Service', href: '/contact' },
-    { name: 'Car Inspection', href: '/contact' },
-    { name: 'Warranty', href: '/contact' },
-    { name: 'Maintenance', href: '/contact' },
-  ]
+    { name: "Car Sales", href: "/cars" },
+    { name: "Car Financing", href: "/contact" },
+    { name: "Trade-in Service", href: "/contact" },
+    { name: "Car Inspection", href: "/contact" },
+    { name: "Warranty", href: "/contact" },
+    { name: "Maintenance", href: "/contact" },
+  ];
 
   const socialLinks = [
-    { name: 'Facebook', href: '#', icon: Facebook },
-    { name: 'Instagram', href: '#', icon: Instagram },
-    { name: 'TikTok', href: '#', icon: MessageCircle },
-  ]
+    {
+      name: "Facebook",
+      href: "https://www.facebook.com/ST_Motors_Rwanda",
+      icon: Facebook,
+    },
+    {
+      name: "Instagram",
+      href: "https://www.instagram.com/stmotorsrwanda?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
+      icon: Instagram,
+    },
+    { name: "TikTok", href: "#", icon: MessageCircle },
+  ];
 
   return (
     <footer className="bg-gray-900 text-white">
@@ -44,21 +60,25 @@ const Footer: React.FC = () => {
               </div>
             </Link>
             <p className="text-gray-300 mb-6 leading-relaxed">
-              Your trusted partner for quality pre-owned vehicles. We provide exceptional service and reliable cars to help you find your perfect match.
+              Your trusted partner for quality pre-owned vehicles. We provide
+              exceptional service and reliable cars to help you find your
+              perfect match.
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social) => {
-                const Icon = social.icon
+                const Icon = social.icon;
                 return (
                   <a
                     key={social.name}
                     href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-600 transition-colors"
                     aria-label={social.name}
                   >
                     <Icon className="w-5 h-5" />
                   </a>
-                )
+                );
               })}
             </div>
           </div>
@@ -105,8 +125,10 @@ const Footer: React.FC = () => {
                 <MapPin className="w-5 h-5 text-primary-400 mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-gray-300">
-                    123 Main Street<br />
-                    City, State 12345<br />
+                    123 Main Street
+                    <br />
+                    City, State 12345
+                    <br />
                     United States
                   </p>
                 </div>
@@ -165,12 +187,7 @@ const Footer: React.FC = () => {
         </div>
       </div>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
-
-
-
-
-
+export default Footer;

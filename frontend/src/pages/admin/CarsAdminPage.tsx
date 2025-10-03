@@ -1,81 +1,100 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from 'react-query'
-import { 
-  Plus, 
-  Search, 
-  Edit, 
-  Trash2, 
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "react-query";
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
   Eye,
   Car,
   Calendar,
   Gauge,
-  DollarSign
-} from 'lucide-react'
-import { carsAPI } from '../../lib/api'
-import toast from 'react-hot-toast'
+  DollarSign,
+} from "lucide-react";
+import { carsAPI, resolveImageUrl, FALLBACK_CAR_THUMB } from "../../lib/api";
+import toast from "react-hot-toast";
 
 const CarsAdminPage: React.FC = () => {
-  const navigate = useNavigate()
-  const queryClient = useQueryClient()
-  const [searchQuery, setSearchQuery] = useState('')
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
-    make: '',
-    condition: '',
-    isFeatured: ''
-  })
+    make: "",
+    condition: "",
+    isFeatured: "",
+  });
 
   // Fetch cars
-  const { data: carsData, isLoading, error, refetch } = useQuery(
-    ['admin-cars', searchQuery, filters],
+  const {
+    data: carsData,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery(
+    ["admin-cars", searchQuery, filters],
     () => {
       if (searchQuery) {
-        return carsAPI.search({ q: searchQuery, limit: 50 })
+        return carsAPI.search({ q: searchQuery, limit: 50 });
       }
-      return carsAPI.getAll({ 
+      return carsAPI.getAll({
         limit: 50,
         make: filters.make || undefined,
         condition: filters.condition || undefined,
-        isFeatured: filters.isFeatured ? filters.isFeatured === 'true' : undefined
-      })
+        isFeatured: filters.isFeatured
+          ? filters.isFeatured === "true"
+          : undefined,
+      });
+    },
+    {
+      // Ensure we always get fresh data after add/edit
+      staleTime: 0,
+      refetchOnMount: "always",
+      refetchOnReconnect: "always",
+      refetchOnWindowFocus: false,
+      select: (response) => response, // keep full axios response
     }
-  )
+  );
 
   // Force refetch on mount to ensure fresh data after adding a car
   useEffect(() => {
-    refetch()
-  }, [refetch])
+    refetch();
+  }, [refetch]);
 
   // Delete car mutation
   const deleteCarMutation = useMutation(carsAPI.delete, {
     onSuccess: () => {
-      queryClient.invalidateQueries('admin-cars')
-      toast.success('Car deleted successfully!')
+      queryClient.invalidateQueries("admin-cars");
+      toast.success("Car deleted successfully!");
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || 'Failed to delete car')
-    }
-  })
+      toast.error(error.response?.data?.message || "Failed to delete car");
+    },
+  });
 
   const handleDelete = async (carId: number, carName: string) => {
-    if (window.confirm(`Are you sure you want to delete ${carName}? This action cannot be undone.`)) {
-      await deleteCarMutation.mutateAsync(carId.toString())
+    if (
+      window.confirm(
+        `Are you sure you want to delete ${carName}? This action cannot be undone.`
+      )
+    ) {
+      await deleteCarMutation.mutateAsync(carId.toString());
     }
-  }
+  };
 
-  const cars = carsData?.data.cars || []
+  const cars = carsData?.data?.data?.cars || carsData?.data?.cars || [];
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
-    }).format(price)
-  }
+    }).format(price);
+  };
 
   const formatMileage = (mileage: number) => {
-    return new Intl.NumberFormat('en-US').format(mileage)
-  }
+    return new Intl.NumberFormat("en-US").format(mileage);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -84,13 +103,12 @@ const CarsAdminPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Car Management</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                Car Management
+              </h1>
               <p className="text-gray-600">Manage your vehicle inventory</p>
             </div>
-            <Link
-              to="/admin/cars/add"
-              className="btn btn-primary"
-            >
+            <Link to="/admin/cars/add" className="btn btn-primary">
               <Plus className="w-4 h-4 mr-2" />
               Add New Car
             </Link>
@@ -121,7 +139,9 @@ const CarsAdminPage: React.FC = () => {
               <div className="flex gap-4">
                 <select
                   value={filters.make}
-                  onChange={(e) => setFilters(prev => ({ ...prev, make: e.target.value }))}
+                  onChange={(e) =>
+                    setFilters((prev) => ({ ...prev, make: e.target.value }))
+                  }
                   className="form-select w-40"
                 >
                   <option value="">All Makes</option>
@@ -137,18 +157,30 @@ const CarsAdminPage: React.FC = () => {
 
                 <select
                   value={filters.condition}
-                  onChange={(e) => setFilters(prev => ({ ...prev, condition: e.target.value }))}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      condition: e.target.value,
+                    }))
+                  }
                   className="form-select w-40"
                 >
                   <option value="">All Conditions</option>
                   <option value="New">New</option>
                   <option value="Used">Used</option>
-                  <option value="Certified Pre-owned">Certified Pre-owned</option>
+                  <option value="Certified Pre-owned">
+                    Certified Pre-owned
+                  </option>
                 </select>
 
                 <select
                   value={filters.isFeatured}
-                  onChange={(e) => setFilters(prev => ({ ...prev, isFeatured: e.target.value }))}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      isFeatured: e.target.value,
+                    }))
+                  }
                   className="form-select w-40"
                 >
                   <option value="">All Cars</option>
@@ -169,8 +201,12 @@ const CarsAdminPage: React.FC = () => {
                   <Car className="w-6 h-6 text-white" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Total Cars</p>
-                  <p className="text-2xl font-bold text-gray-900">{cars.length}</p>
+                  <p className="text-sm font-medium text-gray-600">
+                    Total Cars
+                  </p>
+                  <p className="text-2xl font-bold text-gray-900">
+                    {cars.length}
+                  </p>
                 </div>
               </div>
             </div>
@@ -185,7 +221,7 @@ const CarsAdminPage: React.FC = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">New Cars</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {cars.filter(car => car.condition === 'New').length}
+                    {cars.filter((car) => car.condition === "New").length}
                   </p>
                 </div>
               </div>
@@ -201,7 +237,7 @@ const CarsAdminPage: React.FC = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Used Cars</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {cars.filter(car => car.condition === 'Used').length}
+                    {cars.filter((car) => car.condition === "Used").length}
                   </p>
                 </div>
               </div>
@@ -217,10 +253,12 @@ const CarsAdminPage: React.FC = () => {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Avg Price</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {cars.length > 0 
-                      ? formatPrice(cars.reduce((sum, car) => sum + car.price, 0) / cars.length)
-                      : '$0'
-                    }
+                    {cars.length > 0
+                      ? formatPrice(
+                          cars.reduce((sum, car) => sum + car.price, 0) /
+                            cars.length
+                        )
+                      : "$0"}
                   </p>
                 </div>
               </div>
@@ -231,7 +269,9 @@ const CarsAdminPage: React.FC = () => {
         {/* Cars Table */}
         <div className="card">
           <div className="card-header">
-            <h3 className="text-lg font-semibold text-gray-900">Cars Inventory</h3>
+            <h3 className="text-lg font-semibold text-gray-900">
+              Cars Inventory
+            </h3>
           </div>
           <div className="card-body p-0">
             {isLoading ? (
@@ -241,7 +281,9 @@ const CarsAdminPage: React.FC = () => {
               </div>
             ) : error ? (
               <div className="p-8 text-center">
-                <p className="text-red-600">Failed to load cars. Please try again.</p>
+                <p className="text-red-600">
+                  Failed to load cars. Please try again.
+                </p>
               </div>
             ) : cars.length === 0 ? (
               <div className="p-8 text-center">
@@ -286,17 +328,28 @@ const CarsAdminPage: React.FC = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="flex-shrink-0 h-12 w-12">
-                              {car.images && car.images.length > 0 ? (
-                                <img
-                                  className="h-12 w-12 rounded-lg object-cover"
-                                  src={car.images[0]}
-                                  alt={`${car.make} ${car.model}`}
-                                />
-                              ) : (
-                                <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
-                                  <Car className="w-6 h-6 text-gray-400" />
-                                </div>
-                              )}
+                              {(() => {
+                                const imageSrc =
+                                  car.images && car.images.length > 0
+                                    ? resolveImageUrl(car.images[0])
+                                    : "";
+                                return imageSrc ? (
+                                  <img
+                                    className="h-12 w-12 rounded-lg object-cover"
+                                    src={imageSrc}
+                                    onError={(e) => {
+                                      const target =
+                                        e.currentTarget as HTMLImageElement;
+                                      target.src = FALLBACK_CAR_THUMB;
+                                    }}
+                                    alt={`${car.make} ${car.model}`}
+                                  />
+                                ) : (
+                                  <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                                    <Car className="w-6 h-6 text-gray-400" />
+                                  </div>
+                                );
+                              })()}
                             </div>
                             <div className="ml-4">
                               <div className="text-sm font-medium text-gray-900">
@@ -318,19 +371,27 @@ const CarsAdminPage: React.FC = () => {
                           {formatPrice(car.price)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`badge ${
-                            car.condition === 'New' ? 'badge-success' :
-                            car.condition === 'Used' ? 'badge-warning' :
-                            'badge-info'
-                          }`}>
+                          <span
+                            className={`badge ${
+                              car.condition === "New"
+                                ? "badge-success"
+                                : car.condition === "Used"
+                                ? "badge-warning"
+                                : "badge-info"
+                            }`}
+                          >
                             {car.condition}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`badge ${
-                            car.isFeatured ? 'badge-primary' : 'badge-secondary'
-                          }`}>
-                            {car.isFeatured ? 'Featured' : 'Regular'}
+                          <span
+                            className={`badge ${
+                              car.isFeatured
+                                ? "badge-primary"
+                                : "badge-secondary"
+                            }`}
+                          >
+                            {car.isFeatured ? "Featured" : "Regular"}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -351,7 +412,9 @@ const CarsAdminPage: React.FC = () => {
                               <Edit className="w-4 h-4" />
                             </Link>
                             <button
-                              onClick={() => handleDelete(car.id, `${car.make} ${car.model}`)}
+                              onClick={() =>
+                                handleDelete(car.id, `${car.make} ${car.model}`)
+                              }
                               className="text-red-600 hover:text-red-900"
                               title="Delete car"
                             >
@@ -369,7 +432,7 @@ const CarsAdminPage: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CarsAdminPage
+export default CarsAdminPage;

@@ -125,6 +125,35 @@ export const carsAPI = {
     api.get(`/cars/${id}/inquiries`),
 }
 
+// Helper to resolve image URLs consistently
+export const resolveImageUrl = (pathOrUrl?: string): string => {
+  if (!pathOrUrl) return ''
+  if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://')) {
+    return pathOrUrl
+  }
+  const apiBase: string = (import.meta.env.VITE_API_URL as string | undefined) || 'http://localhost:5000/api'
+  // Derive origin by removing trailing /api if present and any trailing slashes
+  const origin = apiBase.replace(/\/?api\/?$/, '').replace(/\/+$/, '')
+  // Ensure leading slash on resource path
+  const resourcePath = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`
+  return `${origin}${resourcePath}`
+}
+
+// Tiny inline SVG placeholder for car thumbnails
+export const FALLBACK_CAR_THUMB =
+  'data:image/svg+xml;utf8,' +
+  encodeURIComponent(`
+<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
+  <rect width="96" height="96" rx="12" fill="#e5e7eb"/>
+  <g fill="#9ca3af" transform="translate(16,24)">
+    <rect x="0" y="24" width="64" height="12" rx="6" />
+    <circle cx="14" cy="48" r="6" />
+    <circle cx="50" cy="48" r="6" />
+    <rect x="10" y="8" width="44" height="18" rx="6" />
+  </g>
+</svg>`)
+
+
 
 
 // Testimonials API

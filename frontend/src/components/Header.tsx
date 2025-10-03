@@ -1,37 +1,37 @@
-import React, { useState, useEffect } from 'react'
-import { Link, useLocation } from 'react-router-dom'
-import { Menu, X, Car, Phone, Mail } from 'lucide-react'
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, Phone, Mail } from "lucide-react";
 
 const Header: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
-  const location = useLocation()
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
 
   // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
+      setIsScrolled(window.scrollY > 10);
+    };
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close menu when route changes
   useEffect(() => {
-    setIsMenuOpen(false)
-  }, [location])
+    setIsMenuOpen(false);
+  }, [location]);
 
   const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Cars', href: '/cars' },
-    { name: 'About', href: '/about' },
-    { name: 'Contact', href: '/contact' },
-  ]
+    { name: "Home", href: "/" },
+    { name: "Cars", href: "/cars" },
+    { name: "About", href: "/about" },
+    { name: "Contact", href: "/contact" },
+  ];
 
   const isActive = (href: string) => {
-    return location.pathname === href
-  }
+    return location.pathname === href;
+  };
 
   return (
     <>
@@ -42,22 +42,29 @@ const Header: React.FC = () => {
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-2">
                 <Phone className="w-4 h-4" />
-                <span>+1 (555) 123-4567</span>
+                <span>+250 788445011</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="w-4 h-4" />
-                <span>info@safetravelsmotors.com</span>
+                <span>safetravelmotors@gmail.com</span>
               </div>
             </div>
             <div className="hidden md:flex items-center space-x-4">
-              <a href="#" className="hover:text-primary-200 transition-colors">
+              <a
+                href="https://www.facebook.com/ST_Motors_Rwanda"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary-200 transition-colors"
+              >
                 Facebook
               </a>
-              <a href="#" className="hover:text-primary-200 transition-colors">
+              <a
+                href="https://www.instagram.com/stmotorsrwanda"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary-200 transition-colors"
+              >
                 Instagram
-              </a>
-              <a href="#" className="hover:text-primary-200 transition-colors">
-                TikTok
               </a>
             </div>
           </div>
@@ -67,24 +74,21 @@ const Header: React.FC = () => {
       {/* Main Header */}
       <header
         className={`sticky top-0 z-50 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-white shadow-lg'
-            : 'bg-white/95 backdrop-blur-sm'
+          isScrolled ? "bg-white shadow-lg" : "bg-white/95 backdrop-blur-sm"
         }`}
       >
         <div className="container">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-3">
-              <div className="flex items-center justify-center w-10 h-10 bg-primary-600 rounded-lg">
-                <Car className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
-                  SafeTravels
-                </h1>
-                <p className="text-xs text-gray-600 -mt-1">Motors</p>
-              </div>
+              <img
+                src="/logo.png"
+                alt="Safe Travel Motors Logo"
+                className="h-10 w-auto object-contain"
+              />
+              <h1 className="text-xl lg:text-2xl font-bold text-gray-900">
+                Safe Travel Motors
+              </h1>
             </Link>
 
             {/* Desktop Navigation */}
@@ -94,7 +98,7 @@ const Header: React.FC = () => {
                   key={item.name}
                   to={item.href}
                   className={`nav-link ${
-                    isActive(item.href) ? 'nav-link-active' : ''
+                    isActive(item.href) ? "nav-link-active" : ""
                   }`}
                 >
                   {item.name}
@@ -104,10 +108,7 @@ const Header: React.FC = () => {
 
             {/* CTA Button */}
             <div className="hidden lg:flex items-center space-x-4">
-              <Link
-                to="/cars"
-                className="btn-primary"
-              >
+              <Link to="/cars" className="btn-primary">
                 View Cars
               </Link>
             </div>
@@ -136,7 +137,7 @@ const Header: React.FC = () => {
                     key={item.name}
                     to={item.href}
                     className={`nav-link ${
-                      isActive(item.href) ? 'nav-link-active' : ''
+                      isActive(item.href) ? "nav-link-active" : ""
                     }`}
                   >
                     {item.name}
@@ -156,12 +157,7 @@ const Header: React.FC = () => {
         )}
       </header>
     </>
-  )
-}
+  );
+};
 
-export default Header
-
-
-
-
-
+export default Header;
