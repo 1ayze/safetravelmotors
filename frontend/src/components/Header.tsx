@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Phone, Mail } from "lucide-react";
+import { Menu, X, Phone, Mail, Shield } from "lucide-react";
+import AdminLoginModal from "./AdminLoginModal";
+import { useAuth } from "../contexts/AuthContext";
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const location = useLocation();
+  const { isAuthenticated, user, logout } = useAuth();
 
   // Handle scroll effect
   useEffect(() => {
@@ -111,6 +115,34 @@ const Header: React.FC = () => {
               <Link to="/cars" className="btn-primary">
                 View Cars
               </Link>
+              {isAuthenticated ? (
+                <div className="flex items-center space-x-3">
+                  <span className="text-sm text-gray-600">
+                    Welcome, {user?.username}
+                  </span>
+                  <Link
+                    to="/admin/dashboard"
+                    className="flex items-center space-x-2 px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                  >
+                    <Shield className="w-4 h-4" />
+                    <span>Admin</span>
+                  </Link>
+                  <button
+                    onClick={logout}
+                    className="px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsAdminModalOpen(true)}
+                  className="flex items-center space-x-2 px-3 py-2 text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors"
+                >
+                  <Shield className="w-4 h-4" />
+                  <span>Admin Login</span>
+                </button>
+              )}
             </div>
 
             {/* Mobile menu button */}
@@ -143,19 +175,53 @@ const Header: React.FC = () => {
                     {item.name}
                   </Link>
                 ))}
-                <div className="pt-4 border-t border-gray-200">
+                <div className="pt-4 border-t border-gray-200 space-y-3">
                   <Link
                     to="/cars"
                     className="btn-primary w-full justify-center"
                   >
                     View Cars
                   </Link>
+                  {isAuthenticated ? (
+                    <div className="space-y-2">
+                      <div className="text-sm text-gray-600 text-center">
+                        Welcome, {user?.username}
+                      </div>
+                      <Link
+                        to="/admin/dashboard"
+                        className="flex items-center justify-center space-x-2 w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                      >
+                        <Shield className="w-4 h-4" />
+                        <span>Admin Dashboard</span>
+                      </Link>
+                      <button
+                        onClick={logout}
+                        className="w-full px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setIsAdminModalOpen(true)}
+                      className="flex items-center justify-center space-x-2 w-full px-4 py-2 text-primary-600 hover:text-primary-700 hover:bg-primary-50 rounded-lg transition-colors"
+                    >
+                      <Shield className="w-4 h-4" />
+                      <span>Admin Login</span>
+                    </button>
+                  )}
                 </div>
               </nav>
             </div>
           </div>
         )}
       </header>
+
+      {/* Admin Login Modal */}
+      <AdminLoginModal
+        isOpen={isAdminModalOpen}
+        onClose={() => setIsAdminModalOpen(false)}
+      />
     </>
   );
 };

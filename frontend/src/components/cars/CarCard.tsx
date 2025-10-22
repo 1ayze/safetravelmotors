@@ -1,38 +1,39 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { Calendar, Gauge, Fuel, Settings } from 'lucide-react'
+import React from "react";
+import { Link } from "react-router-dom";
+import { Calendar, Gauge, Fuel, Settings } from "lucide-react";
+import { resolveImageUrl, FALLBACK_CAR_THUMB } from "../../lib/api";
 
 interface Car {
-  id: number
-  brand: string
-  model: string
-  year: number
-  mileage: number
-  price: number
-  fuelType: string
-  transmission: string
-  bodyType: string
-  color: string
-  images: string[]
-  isFeatured: boolean
+  id: number;
+  make: string;
+  model: string;
+  year: number;
+  mileage: number;
+  price: number;
+  fuelType: string;
+  transmission: string;
+  bodyType: string;
+  color: string;
+  images: string[];
+  isFeatured: boolean;
 }
 
 interface CarCardProps {
-  car: Car
+  car: Car;
 }
 
 const CarCard: React.FC<CarCardProps> = ({ car }) => {
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
-    }).format(price)
-  }
+    }).format(price);
+  };
 
   const formatMileage = (mileage: number) => {
-    return new Intl.NumberFormat('en-US').format(mileage)
-  }
+    return new Intl.NumberFormat("en-US").format(mileage);
+  };
 
   return (
     <div className="card hover:shadow-medium transition-all duration-300 group">
@@ -41,9 +42,13 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
         <div className="aspect-video bg-gray-200">
           {car.images && car.images.length > 0 ? (
             <img
-              src={car.images[0]}
-              alt={`${car.brand} ${car.model}`}
+              src={resolveImageUrl(car.images[0])}
+              alt={`${car.make} ${car.model}`}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = FALLBACK_CAR_THUMB;
+              }}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-100">
@@ -51,14 +56,14 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
             </div>
           )}
         </div>
-        
+
         {/* Featured Badge */}
         {car.isFeatured && (
           <div className="absolute top-4 left-4">
             <span className="badge-primary">Featured</span>
           </div>
         )}
-        
+
         {/* Price Badge */}
         <div className="absolute top-4 right-4">
           <span className="bg-white/90 backdrop-blur-sm text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">
@@ -71,9 +76,11 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
       <div className="p-6">
         <div className="mb-4">
           <h3 className="text-xl font-semibold text-gray-900 mb-1">
-            {car.brand} {car.model}
+            {car.make} {car.model}
           </h3>
-          <p className="text-gray-600">{car.year} • {car.color}</p>
+          <p className="text-gray-600">
+            {car.year} • {car.color}
+          </p>
         </div>
 
         {/* Car Specs */}
@@ -105,12 +112,7 @@ const CarCard: React.FC<CarCardProps> = ({ car }) => {
         </Link>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CarCard
-
-
-
-
-
+export default CarCard;

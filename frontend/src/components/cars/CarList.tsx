@@ -1,43 +1,44 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import { Calendar, Gauge, Fuel, Settings, MapPin } from 'lucide-react'
+import React from "react";
+import { Link } from "react-router-dom";
+import { Calendar, Gauge, Fuel, Settings, MapPin } from "lucide-react";
+import { resolveImageUrl, FALLBACK_CAR_THUMB } from "../../lib/api";
 
 interface Car {
-  id: number
-  brand: string
-  model: string
-  year: number
-  price: number
-  mileage: number
-  fuelType: string
-  transmission: string
-  bodyType: string
-  color: string
-  description: string
-  images: string[]
-  location: string
-  isAvailable: boolean
-  features: string[]
-  createdAt: string
-  updatedAt: string
+  id: number;
+  make: string;
+  model: string;
+  year: number;
+  price: number;
+  mileage: number;
+  fuelType: string;
+  transmission: string;
+  bodyType: string;
+  color: string;
+  description: string;
+  images: string[];
+  location: string;
+  isAvailable: boolean;
+  features: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface CarListProps {
-  car: Car
+  car: Car;
 }
 
 const CarList: React.FC<CarListProps> = ({ car }) => {
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
       minimumFractionDigits: 0,
-    }).format(price)
-  }
+    }).format(price);
+  };
 
   const formatMileage = (mileage: number) => {
-    return new Intl.NumberFormat('en-US').format(mileage)
-  }
+    return new Intl.NumberFormat("en-US").format(mileage);
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-soft overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -47,9 +48,13 @@ const CarList: React.FC<CarListProps> = ({ car }) => {
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
             {car.images && car.images.length > 0 ? (
               <img
-                src={car.images[0]}
-                alt={`${car.brand} ${car.model}`}
+                src={resolveImageUrl(car.images[0])}
+                alt={`${car.make} ${car.model}`}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = FALLBACK_CAR_THUMB;
+                }}
               />
             ) : (
               <div className="text-gray-400 text-center">
@@ -69,7 +74,7 @@ const CarList: React.FC<CarListProps> = ({ car }) => {
               {/* Header */}
               <div className="mb-4">
                 <h3 className="text-xl font-bold text-gray-900 mb-1">
-                  {car.brand} {car.model}
+                  {car.make} {car.model}
                 </h3>
                 <div className="flex items-center text-gray-600 text-sm space-x-4">
                   <div className="flex items-center">
@@ -151,7 +156,7 @@ const CarList: React.FC<CarListProps> = ({ car }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default CarList
+export default CarList;

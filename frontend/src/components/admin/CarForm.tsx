@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient, useQuery } from "react-query";
+import { useNavigate, useParams } from "react-router-dom";
 import { Upload, X, Plus, Save, ArrowLeft } from "lucide-react";
 import { carsAPI } from "../../lib/api";
 import toast from "react-hot-toast";
@@ -28,12 +28,24 @@ interface CarFormProps {
   initialData?: Partial<CarFormData>;
 }
 
-const CarForm: React.FC<CarFormProps> = ({ carId, initialData }) => {
+const CarForm: React.FC<CarFormProps> = ({ carId: propCarId, initialData }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { id } = useParams<{ id: string }>();
+  const carId = propCarId || id;
   const [images, setImages] = useState<File[]>([]);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Fetch car data for editing
+  const { data: carData, isLoading: carLoading } = useQuery(
+    ["car", carId],
+    () => carsAPI.getById(carId!),
+    {
+      enabled: !!carId,
+      select: (response) => response.data.data.car,
+    }
+  );
 
   const {
     register,
@@ -41,6 +53,7 @@ const CarForm: React.FC<CarFormProps> = ({ carId, initialData }) => {
     formState: { errors },
     setValue,
     watch,
+    reset,
   } = useForm<CarFormData>({
     defaultValues: {
       make: "",
@@ -60,6 +73,28 @@ const CarForm: React.FC<CarFormProps> = ({ carId, initialData }) => {
       ...initialData,
     },
   });
+
+  // Populate form when car data loads
+  useEffect(() => {
+    if (carData) {
+      reset({
+        make: carData.make || "",
+        model: carData.model || "",
+        year: carData.year || new Date().getFullYear(),
+        mileage: carData.mileage || 0,
+        price: carData.price || 0,
+        bodyType: carData.bodyType || "",
+        transmission: carData.transmission || "",
+        condition: carData.condition || "",
+        fuelType: carData.fuelType || "",
+        engineSize: carData.engineSize || "",
+        doors: carData.doors || 4,
+        cylinders: carData.cylinders || 4,
+        description: carData.description || "",
+        isFeatured: carData.isFeatured || false,
+      });
+    }
+  }, [carData, reset]);
 
   const isFeatured = watch("isFeatured");
 
@@ -163,6 +198,18 @@ const CarForm: React.FC<CarFormProps> = ({ carId, initialData }) => {
   ];
   const doorOptions = [2, 3, 4, 5];
   const cylinderOptions = [2, 3, 4, 5, 6, 8, 10, 12];
+
+  // Show loading state while fetching car data
+  if (carId && carLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading car data...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
