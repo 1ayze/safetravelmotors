@@ -88,21 +88,20 @@ export const getAllCars = async (req: Request, res: Response, next: NextFunction
     const orderBy: any = {};
     orderBy[sortBy as string] = sortOrder as string;
 
-    const [cars, totalCount] = await Promise.all([
-      prisma.car.findMany({
-        where,
-        skip,
-        take: limitNum,
-        orderBy,
-      }),
-      prisma.car.count({ where })
-    ]);
+    // Load cars and count
+    const cars = await prisma.car.findMany({
+      where,
+      skip,
+      take: limitNum,
+      orderBy,
+    });
+    const totalCount = await prisma.car.count({ where });
 
-    // Parse images for each car
-    const carsWithParsedData = cars.map(car => ({
-      ...car,
-      images: car.images ? JSON.parse(car.images) : []
-    }));
+    // Parse images for each car (keeping relative paths)
+    const carsWithParsedData = cars.map((car: any) => {
+      const imgs: string[] = car.images ? JSON.parse(car.images) : [];
+      return { ...car, images: imgs };
+    });
 
     const totalPages = Math.ceil(totalCount / limitNum);
 
@@ -135,11 +134,11 @@ export const getFeaturedCars = async (req: Request, res: Response, next: NextFun
       take: 6,
       orderBy: { createdAt: 'desc' }
     });
-
-    const carsWithParsedData = cars.map(car => ({
-      ...car,
-      images: car.images ? JSON.parse(car.images) : []
-    }));
+    
+      const carsWithParsedData = cars.map(car => ({
+        ...car,
+        images: car.images ? JSON.parse(car.images) : []
+      }));
 
     res.json({
       success: true,
@@ -164,11 +163,11 @@ export const getCarById = async (req: Request, res: Response, next: NextFunction
     if (!car) {
       throw new NotFoundError('Car not found');
     }
-
-    const carWithParsedData = {
-      ...car,
-      images: car.images ? JSON.parse(car.images) : []
-    };
+    
+      const carWithParsedData = {
+        ...car,
+        images: car.images ? JSON.parse(car.images) : []
+      };
 
     res.json({
       success: true,
@@ -237,10 +236,10 @@ export const searchCars = async (req: Request, res: Response, next: NextFunction
       prisma.car.count({ where })
     ]);
 
-    const carsWithParsedData = cars.map(car => ({
-      ...car,
-      images: car.images ? JSON.parse(car.images) : []
-    }));
+      const carsWithParsedData = cars.map(car => ({
+        ...car,
+        images: car.images ? JSON.parse(car.images) : []
+      }));
 
     const totalPages = Math.ceil(totalCount / limitNum);
 
@@ -316,10 +315,10 @@ export const createCar = async (req: Request, res: Response, next: NextFunction)
       }
     });
 
-    const carWithParsedData = {
-      ...car,
-      images: car.images ? JSON.parse(car.images) : []
-    };
+      const carWithParsedData = {
+        ...car,
+        images: car.images ? JSON.parse(car.images) : []
+      };
 
     res.status(201).json({
       success: true,
@@ -393,10 +392,10 @@ export const updateCar = async (req: Request, res: Response, next: NextFunction)
       }
     });
 
-    const carWithParsedData = {
-      ...updatedCar,
-      images: updatedCar.images ? JSON.parse(updatedCar.images) : []
-    };
+      const carWithParsedData = {
+        ...updatedCar,
+        images: updatedCar.images ? JSON.parse(updatedCar.images) : []
+      };
 
     res.json({
       success: true,

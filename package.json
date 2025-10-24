@@ -11,12 +11,20 @@
     "start": "cd backend && npm start",
     "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install"
   },
-  "keywords": ["car", "dealership", "react", "nodejs", "mysql"],
+  "keywords": [
+    "car",
+    "dealership",
+    "react",
+    "nodejs",
+    "mysql"
+  ],
   "author": "SafeTravels Motors",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.76.1",
+    "dotenv-cli": "^10.0.0"
   }
 }
-
-
